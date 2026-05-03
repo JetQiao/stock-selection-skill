@@ -1,0 +1,15 @@
+.git/
+.github/
+.claude/
+.cache/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.tgz
+.DS_Store
+.idea/
+.vscode/
+*.test.js
+test/
+tests/
