@@ -10,27 +10,34 @@
 
 ## 一、快速安装（30 秒）
 
-### 方法 A：克隆 + 一键安装（推荐）
+### 方法 A：npm 一键装（最推荐 ⭐）
 
 ```bash
-git clone <本仓库地址> ~/.claude/skills/pb-roe-stock-selection
+npm install -g pb-roe-skill
+```
+
+装完即可：
+- ✅ Claude Code 立即识别 Skill（自动复制到 `~/.claude/skills/`）
+- ✅ 命令行用 `pb-roe` 直接跑
+- ✅ Python 依赖（akshare 等）自动装好
+
+如不想全局安装，用 `npx` 一次性跑：
+
+```bash
+npx pb-roe-skill install        # 仅装 Skill
+npx pb-roe-skill                # 直接跑选股
+```
+
+### 方法 B：从 GitHub 克隆 + 脚本安装
+
+```bash
+git clone https://github.com/JetQiao/stock-selection-skill.git \
+  ~/.claude/skills/pb-roe-stock-selection
 bash ~/.claude/skills/pb-roe-stock-selection/install.sh
 ```
 
-### 方法 B：本地已有代码
-
-```bash
-cd <仓库目录>
-bash install.sh
-```
-
-安装脚本会自动：
-1. 检查 Python 3
-2. 复制到 `~/.claude/skills/pb-roe-stock-selection/`
-3. 安装 Python 依赖（akshare、pandas、jinja2 等）
-4. 验证安装
-
-> **首次安装** akshare 包较大（约 50MB+），需要 1-3 分钟。
+> 任一方式：首次会装 akshare（~50MB），需 1-3 分钟。
+> **前置依赖**：Python 3.9+ 和 Node.js 14+（npm 自带）。
 
 ---
 
@@ -55,6 +62,12 @@ Claude 会自动调用此 Skill，跑完后：
 ### 命令行直接运行
 
 ```bash
+pb-roe                                  # npm 安装后可全局调用
+pb-roe --mode loose --top-n 10
+pb-roe --industry 食品饮料
+pb-roe --help                           # 全部参数
+
+# 或直接跑 Python 脚本
 python3 ~/.claude/skills/pb-roe-stock-selection/scripts/run_pb_roe.py
 ```
 
@@ -143,14 +156,16 @@ A：**不可以**。本工具仅做规则化筛选，不构成投资建议。报
 ## 七、目录结构
 
 ```
-pb-roe-stock-selection/
+pb-roe-skill/                       (npm 包)
+├── package.json          npm 元信息 + bin 入口
+├── bin/pb-roe.js         Node CLI 包装器（install / 直接跑）
 ├── SKILL.md              Skill 元信息（被 Claude 识别）
 ├── README.md             本文件
-├── install.sh            一键安装脚本
+├── install.sh            一键安装脚本（npm 之外的备选方案）
 ├── requirements.txt      Python 依赖
 └── scripts/
     ├── __init__.py
-    ├── run_pb_roe.py     主入口（CLI）
+    ├── run_pb_roe.py     主入口（Python CLI）
     ├── data_source.py    akshare 数据获取 + 本地缓存
     ├── pb_roe_filter.py  筛选逻辑
     └── html_report.py    HTML 报告生成
@@ -161,8 +176,13 @@ pb-roe-stock-selection/
 ## 八、卸载
 
 ```bash
+# npm 安装的：
+npm uninstall -g pb-roe-skill           # 卸载 npm 包
+pb-roe-skill uninstall                  # 卸载前先清 Skill 和缓存
+
+# 手动安装的：
 rm -rf ~/.claude/skills/pb-roe-stock-selection
-rm -rf ~/.cache/pb_roe_skill   # 本地数据缓存
+rm -rf ~/.cache/pb_roe_skill
 ```
 
 ---

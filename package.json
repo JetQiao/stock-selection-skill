@@ -1,0 +1,43 @@
+{
+  "name": "pb-roe-skill",
+  "version": "0.1.0",
+  "description": "A股 PB-ROE 价值选股 Claude Code Skill — 一键安装，HTML 报告输出（数据源 akshare，免费无 token）",
+  "keywords": [
+    "claude-code",
+    "claude-skill",
+    "stock-selection",
+    "pb-roe",
+    "akshare",
+    "a-share",
+    "value-investing",
+    "选股",
+    "价值投资"
+  ],
+  "homepage": "https://github.com/JetQiao/stock-selection-skill",
+  "bugs": "https://github.com/JetQiao/stock-selection-skill/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetQiao/stock-selection-skill.git"
+  },
+  "license": "MIT",
+  "author": "JetQiao",
+  "bin": {
+    "pb-roe": "bin/pb-roe.js",
+    "pb-roe-skill": "bin/pb-roe.js"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "requirements.txt",
+    "scripts/",
+    "bin/",
+    "install.sh"
+  ],
+  "scripts": {
+    "postinstall": "node bin/pb-roe.js postinstall || true"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
