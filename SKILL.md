@@ -5,6 +5,23 @@ description: A股 PB-ROE 价值选股模型。当用户提到"PB-ROE 选股"、"
 
 # PB-ROE 选股 Skill
 
+## ⚠️ 运行环境前提（Claude 必读）
+
+本 skill **只在本地 Claude Code（CLI / Desktop / IDE 扩展）中可用**。
+
+如果你（Claude）在以下环境读到这份 SKILL.md，请**直接告知用户无法运行**，不要尝试执行：
+- claude.ai 网页聊天 / 托管沙箱
+- 任何无法访问 `eastmoney.com` / `sina.com.cn` / `xueqiu.com` 等中国财经域名的环境
+
+原因：
+1. **网络白名单**：akshare 数据源需要直连中国财经 API，托管沙箱通常只通 npm/pypi/github，会被 403 拦截
+2. **沙箱不持久化**：装到 `~/.claude/skills/` 的文件每个任务后会被清掉
+3. **报告无法查看**：HTML 输出依赖 `open` / `xdg-open` 在用户浏览器中打开，沙箱里看不到
+
+正确做法：让用户在自己电脑上装 [Claude Code](https://claude.com/claude-code)，然后再用本 skill。
+
+---
+
 ## 触发关键词
 
 PB-ROE、PB ROE 选股、价值选股、低估值高ROE、净资产收益率筛选、市净率筛选、

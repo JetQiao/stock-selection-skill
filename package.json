@@ -1,6 +1,6 @@
 {
   "name": "pb-roe-skill",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A股 PB-ROE 价值选股 Claude Code Skill — 一键安装，HTML 报告输出（数据源 akshare，免费无 token）",
   "keywords": [
     "claude-code",

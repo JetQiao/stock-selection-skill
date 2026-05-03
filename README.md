@@ -8,6 +8,18 @@
 
 ---
 
+> ## ⚠️ 运行环境要求 — 必读
+>
+> 本 skill **只能在你自己电脑的 Claude Code（CLI / Desktop / IDE 扩展）中运行**，
+> **不能在 claude.ai 网页或托管沙箱中运行**。原因：
+> - 数据源 akshare 需要直连 Eastmoney / 新浪财经 / 雪球 等中国财经 API；托管沙箱的网络白名单只通 npm/pypi/github，访问会被 403 拦截
+> - 托管沙箱不持久化文件系统，`~/.claude/skills/` 装完即丢
+> - 托管沙箱里 Claude 的 skill 注册表与本地不同，自然语言触发也不会生效
+>
+> 简单说：**请在本机装 Claude Code 之后再用本 skill**。在 claude.ai 网页里跑必定失败。
+
+---
+
 ## 一、快速安装（30 秒）
 
 ### 方法 A：`npx` 一行命令（最推荐 ⭐）
