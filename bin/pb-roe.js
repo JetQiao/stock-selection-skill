@@ -257,8 +257,8 @@ function showHelp() {
 ${c('bold', `pb-roe-skill v${PKG_VERSION}`)} — A股 PB-ROE 价值选股 Claude Code Skill
 
 ${c('bold', '安装：')}
-  npm install -g pb-roe-skill              # 全局安装（自动配置 Skill）
-  npx pb-roe-skill install                 # 一次性安装
+  npx -y github:JetQiao/stock-selection-skill install   # 推荐
+  npm install -g github:JetQiao/stock-selection-skill   # 全局安装
 
 ${c('bold', '使用：')}
   pb-roe                                   # 默认 strict 模式选股

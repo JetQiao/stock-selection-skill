@@ -10,25 +10,30 @@
 
 ## 一、快速安装（30 秒）
 
-### 方法 A：npm 一键装（最推荐 ⭐）
+### 方法 A：`npx` 一行命令（最推荐 ⭐）
 
 ```bash
-npm install -g pb-roe-skill
+npx -y github:JetQiao/stock-selection-skill install
 ```
 
 装完即可：
 - ✅ Claude Code 立即识别 Skill（自动复制到 `~/.claude/skills/`）
-- ✅ 命令行用 `pb-roe` 直接跑
+- ✅ 命令行用 `pb-roe` 直接跑（如需，可加 `-g` 全局安装）
 - ✅ Python 依赖（akshare 等）自动装好
 
-如不想全局安装，用 `npx` 一次性跑：
+想锁定版本：
 
 ```bash
-npx pb-roe-skill install        # 仅装 Skill
-npx pb-roe-skill                # 直接跑选股
+npx -y github:JetQiao/stock-selection-skill#v0.1.0 install
 ```
 
-### 方法 B：从 GitHub 克隆 + 脚本安装
+想全局安装让 `pb-roe` 命令永驻：
+
+```bash
+npm install -g github:JetQiao/stock-selection-skill
+```
+
+### 方法 B：从 GitHub 克隆 + 脚本安装（不需要 Node.js）
 
 ```bash
 git clone https://github.com/JetQiao/stock-selection-skill.git \
@@ -37,7 +42,7 @@ bash ~/.claude/skills/pb-roe-stock-selection/install.sh
 ```
 
 > 任一方式：首次会装 akshare（~50MB），需 1-3 分钟。
-> **前置依赖**：Python 3.9+ 和 Node.js 14+（npm 自带）。
+> **前置依赖**：Python 3.9+；方法 A 还需 Node.js 14+（npm/npx 自带）。
 
 ---
 
@@ -176,11 +181,13 @@ pb-roe-skill/                       (npm 包)
 ## 八、卸载
 
 ```bash
-# npm 安装的：
-npm uninstall -g pb-roe-skill           # 卸载 npm 包
-pb-roe-skill uninstall                  # 卸载前先清 Skill 和缓存
+# 一键清干净（无论是 npx 还是 npm 装的）：
+npx -y github:JetQiao/stock-selection-skill uninstall
 
-# 手动安装的：
+# 全局安装额外清一下 npm：
+npm uninstall -g pb-roe-skill
+
+# 或手动删：
 rm -rf ~/.claude/skills/pb-roe-stock-selection
 rm -rf ~/.cache/pb_roe_skill
 ```
