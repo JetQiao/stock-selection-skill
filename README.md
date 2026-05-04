@@ -1,211 +1,104 @@
 # PB-ROE 选股 Skill
 
-一个开箱即用的 A 股 **PB-ROE 价值选股** Claude Code Skill。
-- ✅ **零代码门槛**：装完直接跟 Claude 说"帮我跑 PB-ROE 选股"即可
-- ✅ **数据免费**：基于 akshare，无需 Tushare token、无需付费数据源
-- ✅ **可视化 HTML 报告**：摘要卡 + 行业饼图 + ROE-PB 散点图 + 明细表 + 风险提示
-- ✅ **结果可解释**：每只股票都标注"为什么入选"和"风险点"
+A 股 PB-ROE 价值选股 Claude Code Skill。装完跟 Claude 说一句话，自动出可视化 HTML 报告。
+
+- **零代码**：一行 `npx` 安装，对话触发
+- **数据免费**：基于 akshare，无需 token
+- **结果可解释**：每只股票标注入选理由 + 风险点
 
 ---
 
-> ## ⚠️ 运行环境要求 — 必读
+> ## ⚠️ 必读：只能在本地 Claude Code 跑
 >
-> 本 skill **只能在你自己电脑的 Claude Code（CLI / Desktop / IDE 扩展）中运行**，
-> **不能在 claude.ai 网页或托管沙箱中运行**。原因：
-> - 数据源 akshare 需要直连 Eastmoney / 新浪财经 / 雪球 等中国财经 API；托管沙箱的网络白名单只通 npm/pypi/github，访问会被 403 拦截
-> - 托管沙箱不持久化文件系统，`~/.claude/skills/` 装完即丢
-> - 托管沙箱里 Claude 的 skill 注册表与本地不同，自然语言触发也不会生效
+> 本 skill 只能在你电脑上的 **Claude Code（CLI / Desktop / IDE 扩展）** 中运行，**不能在 claude.ai 网页或托管沙箱中运行**：
+> - akshare 要直连 Eastmoney / 新浪 / 雪球，托管沙箱网络白名单只放行 npm/pypi/github，会被 403 拦截
+> - 沙箱不持久化文件，装完即丢
 >
-> 简单说：**请在本机装 Claude Code 之后再用本 skill**。在 claude.ai 网页里跑必定失败。
+> 请在本机装 [Claude Code](https://claude.com/claude-code) 之后再用本 skill。
 
 ---
 
-## 一、快速安装（30 秒）
-
-### 方法 A：`npx` 一行命令（最推荐 ⭐）
+## 安装
 
 ```bash
 npx -y github:JetQiao/stock-selection-skill install
 ```
 
-装完即可：
-- ✅ Claude Code 立即识别 Skill（自动复制到 `~/.claude/skills/`）
-- ✅ 命令行用 `pb-roe` 直接跑（如需，可加 `-g` 全局安装）
-- ✅ Python 依赖（akshare 等）自动装好
+锁版本：`npx -y github:JetQiao/stock-selection-skill#v0.1.1 install`
 
-想锁定版本：
+全局安装（`pb-roe` 命令永驻）：`npm install -g github:JetQiao/stock-selection-skill`
 
-```bash
-npx -y github:JetQiao/stock-selection-skill#v0.1.0 install
-```
-
-想全局安装让 `pb-roe` 命令永驻：
-
-```bash
-npm install -g github:JetQiao/stock-selection-skill
-```
-
-### 方法 B：从 GitHub 克隆 + 脚本安装（不需要 Node.js）
-
-```bash
-git clone https://github.com/JetQiao/stock-selection-skill.git \
-  ~/.claude/skills/pb-roe-stock-selection
-bash ~/.claude/skills/pb-roe-stock-selection/install.sh
-```
-
-> 任一方式：首次会装 akshare（~50MB），需 1-3 分钟。
-> **前置依赖**：Python 3.9+；方法 A 还需 Node.js 14+（npm/npx 自带）。
+> 前置：Python 3.9+ 和 Node.js 14+。首次会装 akshare（~50MB），需 1-3 分钟。
 
 ---
 
-## 二、怎么用（不需要写代码）
+## 使用
 
-### 在 Claude Code 中直接说话
+**对话触发**（在 Claude Code 中）：
 
-打开 Claude Code，对它说任意一句：
+> "帮我跑 PB-ROE 选股"
+> "PB-ROE 选股，宽松一点"
+> "只看食品饮料行业的 PB-ROE 选股"
 
-- "帮我跑一遍 PB-ROE 选股"
-- "用 PB-ROE 模型选 A 股"
-- "我想看现在有哪些低估值高 ROE 的股票"
-- "PB-ROE 选股，宽松一点的阈值"
-- "只看食品饮料行业的 PB-ROE 选股"
-- "PB-ROE 选股，给我前 10 只"
-
-Claude 会自动调用此 Skill，跑完后：
-1. 终端显示进度
-2. 浏览器**自动打开** HTML 报告
-3. Claude 在对话里给一段简明总结
-
-### 命令行直接运行
+**命令行**：
 
 ```bash
-pb-roe                                  # npm 安装后可全局调用
+pb-roe                              # 默认 strict 模式
 pb-roe --mode loose --top-n 10
-pb-roe --industry 食品饮料
-pb-roe --help                           # 全部参数
-
-# 或直接跑 Python 脚本
-python3 ~/.claude/skills/pb-roe-stock-selection/scripts/run_pb_roe.py
+pb-roe --industry 食品
+pb-roe --help
 ```
 
----
-
-## 三、常用参数
-
-| 参数 | 说明 | 示例 |
+| 参数 | 说明 | 默认 |
 |------|------|------|
-| `--mode` | strict / loose（宽松版阈值） | `--mode loose` |
-| `--min-roe` | 最低 ROE(TTM)（%） | `--min-roe 12` |
-| `--max-debt` | 最高资产负债率（%） | `--max-debt 50` |
-| `--min-dividend` | 最低股息率（%） | `--min-dividend 2` |
-| `--top-n` | 输出股票数量 | `--top-n 10` |
-| `--industry` | 限定行业（模糊匹配） | `--industry 食品` |
-| `--output` | HTML 输出路径 | `--output ~/my.html` |
-| `--skip-history` | 跳过历史 ROE 检查（更快） | `--skip-history` |
-| `--clear-cache` | 清空缓存后重跑 | `--clear-cache` |
-| `--no-open` | 跑完不自动打开浏览器 | `--no-open` |
+| `--mode` | strict / loose | strict |
+| `--min-roe` | 最低 ROE(TTM) % | 15 (strict) / 12 (loose) |
+| `--max-debt` | 最高资产负债率 % | 60 |
+| `--min-dividend` | 最低股息率 % | 1 (strict) / 0.5 (loose) |
+| `--top-n` | 输出股票数量 | 20 |
+| `--industry` | 行业模糊匹配 | 全部 |
+| `--output` | HTML 输出路径 | `~/pb_roe_report.html` |
+| `--skip-history` | 跳过 5 年历史 ROE 检查（快 5-10 倍） | off |
+| `--clear-cache` | 清空缓存重跑 | off |
+| `--no-open` | 跑完不自动打开浏览器 | off |
 
 ---
 
-## 四、HTML 报告长什么样
+## 模型逻辑
 
-报告包含：
+**基础过滤**：剔除 ST/退市、上市不满 1 年、金融/地产、净资产为负、亏损公司。
 
-1. **顶部摘要卡** —— 入选数 / 平均 ROE / 平均 PB / 平均股息率 / 总市值
-2. **筛选条件展示** —— 这次用了哪些阈值，一目了然
-3. **行业分布饼图** —— 入选股票的行业分散度
-4. **ROE-PB 散点图** —— 每只股票一个点，悬停看详情
-5. **筛选漏斗** —— 从全市场到入选的每一步剔除多少
-6. **股票明细表** —— 代码 / 名称 / 行业 / ROE / PB / ROE-PB 比 / 股息率 / 市值
-   - 每行下方标注 ✓ 入选理由 + ⚠ 风险点
-   - 表头可点击排序
-7. **风险提示** —— 周期股陷阱、价值陷阱、财务造假等通用风险
-8. **方法论说明**（可折叠）
+**核心条件（strict）**：
+- 扣非 ROE(TTM) ≥ 15%；过去 3 年均 ≥ 12%；5 年均值 ≥ 15%
+- PB ≤ 行业 PB 中位数
 
----
+**进阶条件**：负债率 ≤ 60%、经营现金流/净利润 ≥ 0.8、股息率 ≥ 1%、3 年净利润复合增速 ≥ 10%
 
-## 五、模型逻辑（参考）
+**排序**：按 `ROE / PB` 降序取前 N 只。
 
-### 基础过滤
-- 剔除 ST、*ST、退市股
-- 剔除上市不满 1 年
-- 剔除金融（银行/保险/证券）、房地产
-- 剔除净资产为负、亏损公司
-
-### 核心条件（strict 模式）
-- 最新扣非 ROE(TTM) ≥ **15%**
-- 过去 3 年扣非 ROE 均 ≥ **12%**
-- 过去 5 年扣非 ROE 均值 ≥ **15%**
-- 最新 PB ≤ 行业 PB 中位数
-
-### 进阶条件
-- 资产负债率 ≤ **60%**
-- 经营现金流/净利润 ≥ **0.8**
-- 股息率 ≥ **1%**
-- 近 3 年净利润复合增长率 ≥ **10%**
-
-### 排序
-按 **ROE / PB** 降序，取前 N 只。
-
-> 详细设计思路见 [SKILL.md](SKILL.md)。
+详细设计思路见 [SKILL.md](SKILL.md)。
 
 ---
 
-## 六、常见问题
+## 常见问题
 
-**Q：报告显示"入选 0 只"怎么办？**
-A：默认 strict 模式比较严格，可加 `--mode loose` 试宽松版；或检查是否数据缓存过期，加 `--clear-cache`。
+**入选 0 只？** 加 `--mode loose`，或 `--clear-cache` 排除缓存过期。
 
-**Q：跑得很慢怎么办？**
-A：默认会检查每只股票的 5 年历史 ROE，加 `--skip-history` 可跳过这一步，速度提升 5-10 倍。
+**跑得很慢？** 加 `--skip-history`（默认会拉每只股票的 5 年历史 ROE）。
 
-**Q：数据是实时的吗？**
-A：行情数据是当日最新，财务数据来自最近一期定期报告。本地缓存 12 小时，加 `--clear-cache` 强制刷新。
+**数据多新？** 行情当日最新，财务取最近一期定期报告。本地缓存 12 小时，`--clear-cache` 强制刷新。
 
-**Q：能否回测？**
-A：当前版本只做"实时选股"。回测功能在路线图里。
-
-**Q：可靠吗？能直接拿来买吗？**
-A：**不可以**。本工具仅做规则化筛选，不构成投资建议。报告底部的"风险提示"务必通读。
+**能直接拿来买吗？** **不能**。仅规则化筛选，不构成投资建议。务必读报告底部的风险提示。
 
 ---
 
-## 七、目录结构
-
-```
-pb-roe-skill/                       (npm 包)
-├── package.json          npm 元信息 + bin 入口
-├── bin/pb-roe.js         Node CLI 包装器（install / 直接跑）
-├── SKILL.md              Skill 元信息（被 Claude 识别）
-├── README.md             本文件
-├── install.sh            一键安装脚本（npm 之外的备选方案）
-├── requirements.txt      Python 依赖
-└── scripts/
-    ├── __init__.py
-    ├── run_pb_roe.py     主入口（Python CLI）
-    ├── data_source.py    akshare 数据获取 + 本地缓存
-    ├── pb_roe_filter.py  筛选逻辑
-    └── html_report.py    HTML 报告生成
-```
-
----
-
-## 八、卸载
+## 卸载
 
 ```bash
-# 一键清干净（无论是 npx 还是 npm 装的）：
-npx -y github:JetQiao/stock-selection-skill uninstall
-
-# 全局安装额外清一下 npm：
-npm uninstall -g pb-roe-skill
-
-# 或手动删：
-rm -rf ~/.claude/skills/pb-roe-stock-selection
-rm -rf ~/.cache/pb_roe_skill
+npx -y github:JetQiao/stock-selection-skill uninstall   # 清 Skill + 缓存
+npm uninstall -g pb-roe-skill                           # 仅全局安装时
 ```
 
 ---
 
-## License
-
-MIT
+MIT License
